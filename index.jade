@@ -1,0 +1,91 @@
+doctype html
+html
+  head
+    title Fire Data Visualization
+    link(rel='stylesheet', href='http://yui.yahooapis.com/pure/0.1.0/pure-min.css')
+    link(rel='stylesheet', href='static/skin.css')
+    style
+      .sidebar {
+        background: rgb(245, 245, 245);
+        font-size: 80%;
+      }
+      .report {
+        padding: 0 50px 50px 50px;
+      }
+      .challenge {
+        padding-left: 3em;
+        width: 50em;
+        font-style: italic;
+        color: rgb(123, 160, 123);
+      }
+      
+  body
+    h1 Fire Data Visualization
+    p A response to the challenge:
+    p.challenge How can we use the National Fire Incident Reporting System (NFIRS) data and other related pertinent data to increase fire safety and prevention awareness, and potentially improve processes, ultimately reducing fire injuries and fatalities across the nation?
+    div.pure-g
+      div.pure-u-1-6.sidebar
+        include sidebar
+      div.pure-u-5-6.main
+        if row
+          div.report
+            h2 2011 Fire Reporting for ZIP #{row.ZIP} (in #{row.STATE})
+            
+            p
+              small This report is based on #{row.Fires} reported #{row.Fires == 1 ? 'fire' : 'fires'} in 2011. NFIRS typically captures about three-quarters of all reported fires in the U.S. per year.
+
+            p #{row.MajorPCT} of the fires were classified Major.
+
+            div.pure-u-1-2
+              
+              h3 Classification
+              table.pure-table
+                thead
+                  tr
+                    th Type
+                    th Frequency
+                tbody
+                  tr
+                    td Residential Structure
+                    td= row.ResStrucPCT
+                  tr
+                    td Non-Residential Structure
+                    td= row.NonresStrucPCT
+                  tr
+                    td Vehicle
+                    td= row.VehPCT
+                  tr
+                    td Outside
+                    td= row.OutsidePCT
+                  tr
+                    td Other
+                    td= row.OtherPCT
+            div.pure-u-1-2
+              h3 Causes
+              table.pure-table
+                thead
+                  tr
+                    th Cause
+                    th Frequency
+                tbody
+                  tr
+                    td Intentional
+                    td= row.Cause_IntPCT
+                  tr
+                    td Smoking
+                    td= row.Cause_SmokingPCT
+                  tr
+                    td Heating
+                    td= row.Cause_HeatingPCT
+                  tr
+                    td Cooking
+                    td= row.Cause_CookingPCT
+                
+
+          
+        form.pure-form
+          | ZIP code to view: 
+          input(type='text', name='zip', value=(row && row.ZIP))
+          | 
+          button.pure-button.pure-button-primary(type='submit')
+            | View
