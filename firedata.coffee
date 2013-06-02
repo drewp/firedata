@@ -1,5 +1,8 @@
 express = require("express")
 build = require("consolidate-build")
+restler = require("restler")
+zipborders = 'http://localhost:3002/'
+
 app = express()
 server = require("http").createServer(app)
 
@@ -21,13 +24,35 @@ gunzip = zlib.createGunzip()
 inStream = fs.createReadStream("./data/challenge_20130429.csv.gz").pipe(gunzip)
 csv().from.stream(inStream, {columns: true}).transform((row) ->
   zipRows[row.ZIP] = row
+  zipRows[row.ZIP].Fires = parseInt(zipRows[row.ZIP].Fires)
 )
 
 app.get "/", (req, res) ->
   row = zipRows[req.query.zip]
-  res.render("index.jade", {
-    row: row
-  })
 
+
+
+  nearbyZips = restler.get(zipborders + "near",
+                           {query: {
+                              meters: 15 * 1609
+                              zip: req.query.zip
+                           }}).on('complete', (result) ->
+      if (result instanceof Error)
+        console.log(result)
+        return res.send(500)
+
+      tot = 0
+      result.near.forEach (near) ->
+        nearRow = zipRows[near.zip]
+        if nearRow?
+          tot += nearRow.Fires
+  
+      res.render("index.jade", {
+        totalNearby: tot
+        row: row
+      })
+        
+  )
+  
 server.listen(3001)
 console.log("serving on port 3001")

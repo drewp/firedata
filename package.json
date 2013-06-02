@@ -10,6 +10,11 @@
     "csv": "~0.3.2",
     "coffee-script": "1.6.2",
     "express": "3.2.0",
-    "then-jade": "1.1.0"
+    "then-jade": "1.1.0",
+    "geolib": "~1.2.5",
+    "xml-object-stream": "~0.2.0",
+    "underscore": "~1.4.4",
+    "request-json": "~0.3.6",
+    "restler": "~2.0.1"
   }
 }
