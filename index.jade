@@ -4,38 +4,9 @@ html
     title Fire Data Visualization
     link(rel='stylesheet', href='http://yui.yahooapis.com/pure/0.1.0/pure-min.css')
     link(rel='stylesheet', href='static/skin.css')
-    style
-      .sidebar {
-        background: rgb(245, 245, 245);
-        font-size: 80%;
-      }
-      .report {
-        padding: 0 50px 50px 50px;
-      }
-      .challenge {
-        padding-left: 3em;
-        width: 50em;
-        font-style: italic;
-        color: rgb(123, 160, 123);
-      }
-      #map {
-        width: 720px;
-        height: 300px;
-        border: 1px solid gray;
-      }
-      #map polygon {
-        stroke-width: .002px;
-        stroke: black;
-        fill: red;
-      }
-      #map circle {
-        fill: red;
-      }
-      
+    include style      
   body
-    h1 Fire Data Visualization
-    p A response to the challenge:
-    p.challenge How can we use the National Fire Incident Reporting System (NFIRS) data and other related pertinent data to increase fire safety and prevention awareness, and potentially improve processes, ultimately reducing fire injuries and fatalities across the nation?
+    include topbar
     div.pure-g
       div.pure-u-1-6.sidebar
         include sidebar
