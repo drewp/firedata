@@ -1,34 +1,40 @@
 svg = d3.select("svg")
+trans = (tx, ty) -> " translate("+tx+" "+ty+")"
+scale = (sx, sy) -> " scale("+sx+" "+sy+")"
 
 class Coords
   constructor: (svg) ->
     @radiusMeters = 15*1609 # set how many meters it is from center to right
     
     @aspect = 1.5
-    @centerLon = -122.25
-    @centerLat = 37.53
+    @centerLon = 0
+    @centerLat = 0
         
     jq = $(svg[0][0])
     normalizedCoords = svg.append("svg:g")
     [hw, hh] = [jq.width() / 2, jq.height() / 2]
-    normalizedCoords.attr("transform", "translate("+hw+" "+hh+") scale("+hw+" "+hw+")")
+    normalizedCoords.attr("transform", trans(hw, hh) + scale(hw, hw))
     @geoCoords = normalizedCoords.append("svg:g")
     @updateTransform()
+
     
   updateTransform: () =>
     # (this is exact at 45deg latitude)
     metersPerLonDeg = 78846
-    scl = metersPerLonDeg / @radiusMeters
-    @geoCoords.attr("transform", "scale("+(scl)+" "+(-scl * @aspect)+") "+
-                                 "translate("+(-@centerLon)+" "+
-                                              (-@centerLat)+")")
+    @scl = metersPerLonDeg / @radiusMeters
+    @geoCoords.attr("transform", scale(@scl, -@scl * @aspect) +
+                                 trans(-@centerLon, -@centerLat))
+  undoGeoFlipTransform: () =>
+    return scale(1 / @scl, 1 / (-@scl * @aspect))
               
     
 coords = new Coords(svg)
-coords.radiusMeters = diagramData.radius
+coords.radiusMeters = diagramData.radius * .8
 
 zipBoundaries = coords.geoCoords.append("svg:g")
 zipBoundaries.attr("class", "zipBoundaries")
+
+labels = coords.geoCoords.append("svg:g").attr("class", "labels")
 
 addSvgGroupFromXml = (d3Node, xmlString) ->
   # thanks, http://stackoverflow.com/a/9724151/112864
@@ -46,12 +52,34 @@ if diagramData.nearZips?
   commas = diagramData.nearZips.join(",")
 
   d3.text("zipborders/zipOutline/" + commas, (xmlString) ->
-    grps = addSvgGroupFromXml(zipBoundaries, xmlString)
-    for grp in grps
-      if grp.getAttribute("id") == diagramData.queryZip
-        d3.select(grp).classed("queried", true);
-        coords.centerLon = parseFloat(grp.getAttribute("lon"))
-        coords.centerLat = parseFloat(grp.getAttribute("lat"))
+    groups = addSvgGroupFromXml(zipBoundaries, xmlString)
+
+    for group in groups
+      groupZip = group.getAttribute("id")
+
+      if groupZip == diagramData.queryZip
+        d3.select(group).classed("queried", true);
+        coords.centerLon = parseFloat(group.getAttribute("lon"))
+        coords.centerLat = parseFloat(group.getAttribute("lat"))
         coords.updateTransform()
+        
+    for group in groups
+      groupZip = group.getAttribute("id")
+
+      g = labels.append("svg:g")
+      g.attr("transform", trans(parseFloat(group.getAttribute("lon")),
+                                parseFloat(group.getAttribute("lat"))))
+
+      g.append("svg:text")
+      .attr("transform", coords.undoGeoFlipTransform())
+      .text(groupZip)
+
+      if false # not useful yet
+        $(group).click(() ->
+          console.log($(this).attr("id"))
+          coords.centerLon = parseFloat($(this).attr("lon"))
+          coords.centerLat = parseFloat($(this).attr("lat"))
+          coords.updateTransform()
+          
+        )
   )
-    
