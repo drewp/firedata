@@ -32,22 +32,26 @@ zipBoundaries.attr("class", "zipBoundaries")
 
 addSvgGroupFromXml = (d3Node, xmlString) ->
   # thanks, http://stackoverflow.com/a/9724151/112864
-  withNamespace = '<svg xmlns="http://www.w3.org/2000/svg">' + xmlString + '</svg>'
   parser = new window.DOMParser()
-  doc = parser.parseFromString(withNamespace, 'image/svg+xml')
-  newGroup = doc.documentElement.firstChild
-  d3Node[0][0].appendChild(document.importNode(newGroup, true))
-
+  doc = parser.parseFromString(xmlString, 'image/svg+xml')
+  newGroup = doc.documentElement
+  all = document.importNode(newGroup, true)
+  groups = []
+  while all.firstChild
+    groups.push(all.firstChild)
+    d3Node[0][0].appendChild(all.firstChild)
+  groups
 
 if diagramData.nearZips?
-  diagramData.nearZips.forEach (zip) ->
-    d3.text("zipborders/zipOutline/" + zip, (xmlString) ->
-      grp = addSvgGroupFromXml(zipBoundaries, xmlString)
-      if zip == diagramData.queryZip
+  commas = diagramData.nearZips.join(",")
+
+  d3.text("zipborders/zipOutline/" + commas, (xmlString) ->
+    grps = addSvgGroupFromXml(zipBoundaries, xmlString)
+    for grp in grps
+      if grp.getAttribute("id") == diagramData.queryZip
         d3.select(grp).classed("queried", true);
-        window.grp = grp
         coords.centerLon = parseFloat(grp.getAttribute("lon"))
         coords.centerLat = parseFloat(grp.getAttribute("lat"))
         coords.updateTransform()
-    )
+  )
     
