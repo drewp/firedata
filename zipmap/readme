@@ -1,3 +1,4 @@
-wget http://www.mccurley.org/svg/data/06.svgz
+wget http://www.mccurley.org/svg/data/allzips.svgz
+gunzip -c allzips.svgz > allzips.svg
 
 see http://www.mccurley.org/svg/
