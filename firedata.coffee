@@ -34,18 +34,16 @@ zipRows = loadChallengeData()
 
 app.get "/", (req, res) ->
   row = zipRows[req.query.zip]
-  console.log("req", req._startTime)
   nearbyZips = restler.get(zipborders + "near",
                            {query: {
                               meters: 15 * 1609
                               zip: req.query.zip
-                           }}).on('complete', (result) ->
+                           }}).on('complete', (result, response) ->
       if (result instanceof Error)
-        console.log("err", req._startTime)
         return res.send(500)
 
-      if not result.near?
-        result.near = []
+      if not result?.near?
+        result = {near: []}
         
       tot = 0
       result.near.forEach (near) ->
@@ -53,7 +51,6 @@ app.get "/", (req, res) ->
         if nearRow?
           tot += nearRow.Fires
 
-      console.log("success", req._startTime)
       # this would run again at odd times without the bug fix in
       # https://github.com/danwrong/restler/pull/113
       res.render("index.jade", {
