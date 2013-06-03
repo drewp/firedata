@@ -23,50 +23,8 @@ html
             p #{row.MajorPCT} of the fires were classified Major.
 
             div.pure-u-1-2
+              include tables
               
-              h3 Classification
-              table.pure-table
-                thead
-                  tr
-                    th Type
-                    th Frequency
-                tbody
-                  tr
-                    td Residential Structure
-                    td= row.ResStrucPCT
-                  tr
-                    td Non-Residential Structure
-                    td= row.NonresStrucPCT
-                  tr
-                    td Vehicle
-                    td= row.VehPCT
-                  tr
-                    td Outside
-                    td= row.OutsidePCT
-                  tr
-                    td Other
-                    td= row.OtherPCT
-            div.pure-u-1-2
-              h3 Causes
-              table.pure-table
-                thead
-                  tr
-                    th Cause
-                    th Frequency
-                tbody
-                  tr
-                    td Intentional
-                    td= row.Cause_IntPCT
-                  tr
-                    td Smoking
-                    td= row.Cause_SmokingPCT
-                  tr
-                    td Heating
-                    td= row.Cause_HeatingPCT
-                  tr
-                    td Cooking
-                    td= row.Cause_CookingPCT
-                
           p In zip codes within 15 miles of #{row.ZIP}, there were #{totalNearby} reported fires.
           
         form.pure-form
