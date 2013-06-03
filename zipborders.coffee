@@ -9,7 +9,7 @@ server = require("http").createServer(app)
 app.use(express.logger())
 
 loadSvg = (mapFilename) ->
-  zips = []
+  zips = {} # zip : record
   console.log("reading " + mapFilename)
   doc = libxmljs.parseXmlString(fs.readFileSync(mapFilename))
 
@@ -23,15 +23,14 @@ loadSvg = (mapFilename) ->
 
     zip = attrs.id
     center = {latitude: parseFloat(attrs.lat), longitude: parseFloat(attrs.lon)}
-    console.log("maps for", zip, g.name())
 
-    zips.push({
+    zips[zip] = {
       zip: zip
       center: center
       postname: attrs.postname
       xml: g.toString()
-    })
-  console.log("loaded "+zips.length+" zip boundaries")
+    }
+  console.log("loaded "+Object.keys(zips).length+" zip boundaries")
   zips
 
 zips = loadSvg('zipmap/allzips.svg')
@@ -41,29 +40,35 @@ app.get "/", (req, res) ->
   res.end()
 
 app.get "/zipOutline/:zip", (req, res) ->
-  zip = _.find(zips, (z) -> z.zip == req.params.zip)
-  res.write(zip.xml)
+  requestedZips = req.params.zip.split(",")
+  if requestedZips.length > 1000
+    return res.send(500)
+
+  res.write('<svg xmlns="http://www.w3.org/2000/svg">')
+    
+  requestedZips.forEach (z) ->
+    res.write(zips[z].xml)
+
+  res.write('</svg>')
   res.end()
 
 app.get "/near", (req, res) ->
-  console.log(req.query)
   zip = req.query.zip
   m = parseFloat(req.query.meters)
-  console.log("finding ", m, " m near ", zip)
-  requestedCenter = _.find(zips, (z) -> z.zip == zip)
+  console.log("finding", m, "m near", zip)
+  requestedCenter = zips[zip]
   if not requestedCenter?
     return res.send(400, zip)
   requestedCenter = requestedCenter.center
 
   closeZips = []
-  zips.forEach (z) ->
-    d = geolib.getDistance(z.center, requestedCenter)
+  for z, row of zips
+    d = geolib.getDistance(row.center, requestedCenter)
     if (d < m)
-      closeZips.push(_.extend({distm: d}, z))
-      
+      closeZips.push(_.extend({distm: d}, row))
   
   res.json({"near": closeZips})
 
-
 server.listen(3192)
 console.log("serving on port 3192")
+
