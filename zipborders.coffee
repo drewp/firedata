@@ -49,5 +49,5 @@ app.get "/near", (req, res) ->
   res.json({"near": closeZips})
 
 
-server.listen(3002)
-console.log("serving on port 3002")
+server.listen(3192)
+console.log("serving on port 3192")

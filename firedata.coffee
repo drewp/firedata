@@ -63,5 +63,5 @@ app.get "/gui.js", (req, res) ->
     res.contentType("text/javascript")
     res.render("gui.coffee")
 
-server.listen(3001)
-console.log("serving on port 3001")
+server.listen(3191)
+console.log("serving on port 3191")
