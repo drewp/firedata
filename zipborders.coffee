@@ -25,6 +25,10 @@ app.get "/", (req, res) ->
   res.write("zipborders server")
   res.end()
 
+app.get "/zipOutline/:zip", (req, res) ->
+  res.write("<g></g>")
+  res.end()
+
 app.get "/near", (req, res) ->
   console.log(req.query)
   zip = req.query.zip

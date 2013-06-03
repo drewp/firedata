@@ -18,6 +18,19 @@ html
         font-style: italic;
         color: rgb(123, 160, 123);
       }
+      #map {
+        width: 720px;
+        height: 300px;
+        border: 1px solid gray;
+      }
+      #map polygon {
+        stroke-width: 2px;
+        stroke: black;
+        fill: red;
+      }
+      #map circle {
+        fill: red;
+      }
       
   body
     h1 Fire Data Visualization
@@ -29,6 +42,8 @@ html
       div.pure-u-5-6.main
         if row
           div.report
+            svg#map
+            
             h2 2011 Fire Reporting for ZIP #{row.ZIP} (in #{row.STATE})
             
             p
@@ -89,3 +104,7 @@ html
           | 
           button.pure-button.pure-button-primary(type='submit')
             | View
+
+    script(src="static/jquery-1.10.1.min.js")
+    script(src="static/d3.v2.js")
+    script(src="gui.js")
