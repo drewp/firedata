@@ -47,6 +47,8 @@ app.get "/", (req, res) ->
         if nearRow?
           tot += nearRow.Fires
   
+      # this would run again at odd times without the bug fix in
+      # https://github.com/danwrong/restler/pull/113
       res.render("index.jade", {
         totalNearby: tot
         row: row
