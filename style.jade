@@ -14,14 +14,16 @@ style
   }
   #map {
     width: 720px;
-    height: 300px;
+    height: 400px;
     border: 1px solid gray;
+    background: hsl(240, 75%, 84%);
   }
-  #map polygon {
-    stroke-width: .002px;
+  #map .zipBoundaries polygon {
+    stroke-width: .0002px;
     stroke: black;
-    fill: red;
+    fill: white;
   }
-  #map circle {
-    fill: red;
+  #map .zipBoundaries .queried polygon {
+    fill: hsl(24, 81%, 68%);
   }
+

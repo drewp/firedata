@@ -8,25 +8,33 @@ server = require("http").createServer(app)
 
 app.use(express.logger())
 
-loadSvg = () ->
+loadSvg = (mapFilename) ->
   zips = []
-  doc = libxmljs.parseXmlString(fs.readFileSync('zipmap/06-fix.svg'))
-  doc.find("g").forEach (g) ->
+  console.log("reading " + mapFilename)
+  doc = libxmljs.parseXmlString(fs.readFileSync(mapFilename))
+
+  doc.get("//g[@id='zips']").childNodes().forEach (g) ->
+    if g.name() == "text"
+      return
+      
     attrs = {}
     for a in g.attrs()
       attrs[a.name()] = a.value()
 
     zip = attrs.id
     center = {latitude: parseFloat(attrs.lat), longitude: parseFloat(attrs.lon)}
+    console.log("maps for", zip, g.name())
+
     zips.push({
       zip: zip
       center: center
       postname: attrs.postname
       xml: g.toString()
     })
+  console.log("loaded "+zips.length+" zip boundaries")
   zips
 
-zips = loadSvg()
+zips = loadSvg('zipmap/allzips.svg')
 
 app.get "/", (req, res) ->
   res.write("zipborders server")

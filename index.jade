@@ -11,22 +11,31 @@ html
       div.pure-u-1-6.sidebar
         include sidebar
       div.pure-u-5-6.main
-        if row
+        if (diagramData.queryZip !== null)
           div.report
+            h2
+              | 2011 Fire Reporting for ZIP #{diagramData.queryZip}
+              if (row && row.STATE)
+                |  (in #{row.STATE})
+                
             svg#map
-            
-            h2 2011 Fire Reporting for ZIP #{row.ZIP} (in #{row.STATE})
-            
-            p
-              small This report is based on #{row.Fires} reported #{row.Fires == 1 ? 'fire' : 'fires'} in 2011. NFIRS typically captures about three-quarters of all reported fires in the U.S. per year.
+            if (diagramData.nearZips === null)
+              p We have no map data for #{diagramData.queryZip} 
 
-            p #{row.MajorPCT} of the fires were classified Major.
+            if (row && row.Fires)
+              p
+                small This report is based on #{row.Fires} reported #{row.Fires == 1 ? 'fire' : 'fires'} in 2011. NFIRS typically captures about three-quarters of all reported fires in the U.S. per year.
 
-            div.pure-u-1-2
+              p #{row.MajorPCT} of the fires were classified Major.
+      
               include tables
               
-          p In zip codes within 15 miles of #{row.ZIP}, there were #{totalNearby} reported fires.
-          
+              p In zip codes within 15 miles of #{row.ZIP}, there were #{totalNearby} reported fires.
+        if (!row)
+          p
+            | There was no fire data for
+            | #{diagramData.queryZip} in the 2011 NFIRS records.
+            
         form.pure-form
           | ZIP code to view: 
           input(type='text', name='zip', value=(row && row.ZIP))
@@ -36,4 +45,6 @@ html
 
     script(src="static/jquery-1.10.1.min.js")
     script(src="static/d3.v2.js")
+    script(type="text/javascript")
+      var diagramData = !{JSON.stringify(diagramData)};
     script(src="gui.js")
