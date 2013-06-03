@@ -19,6 +19,7 @@ app.use(express.logger())
 app.use(express.bodyParser())
 
 padZip = (s) ->
+  return null if not s?
   ('00000' + s).slice(-5)
 
 loadChallengeData = (filename, cb) ->

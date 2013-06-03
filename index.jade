@@ -31,7 +31,7 @@ html
               include tables
               
               p In zip codes within 15 miles of #{row.ZIP}, there were #{totalNearby} reported fires.
-        if (!row)
+        if (!row && diagramData.queryZip !== null)
           p
             | There was no fire data for
             | #{diagramData.queryZip} in the 2011 NFIRS records.
