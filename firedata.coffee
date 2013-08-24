@@ -46,6 +46,7 @@ loadChallengeData "./data/challenge_20130429.csv.gz", (err, zipRows) ->
       # this would run again at odd times without the bug fix in
       # https://github.com/danwrong/restler/pull/113
       res.render("index.jade", {
+        cache: true,  # (this is to the jade engine)
         totalNearby: tot
         diagramData: {
           nearZips: if nearRecords then (n.zip for n in nearRecords) else null
@@ -75,7 +76,7 @@ loadChallengeData "./data/challenge_20130429.csv.gz", (err, zipRows) ->
 
   app.get "/gui.js", (req, res) ->
       res.contentType("text/javascript")
-      res.render("gui.coffee")
+      res.render("gui.coffee", {cache: true})
 
   server.listen(3191)
   console.log("serving on port 3191")
